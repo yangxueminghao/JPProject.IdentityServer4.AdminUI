@@ -1,9 +1,9 @@
-FROM microsoft/dotnet:3.1-aspnetcore-runtime AS base
+FROM microsoft/dotnet:3.1-aspnetcore-runtime
 WORKDIR /app
 EXPOSE 5003
 EXPOSE 5002
 
-FROM microsoft/dotnet:3.1-sdk AS build
+FROM microsoft/dotnet:3.1-sdk
 WORKDIR /src
 COPY ["Backend/Jp.UserManagement/Jp.Management.csproj", "Backend/Jp.UserManagement/"]
 COPY ["Backend/Jp.Infra.Migrations.Sql.Identity/Jp.Infra.Migrations.Sql.csproj", "Backend/Jp.Infra.Migrations.Sql.Identity/"]
@@ -21,10 +21,10 @@ COPY . .
 WORKDIR "/src/Backend/Jp.UserManagement"
 RUN dotnet build "Jp.Management.csproj" -c Release -o /app
 
-FROM build AS publish
+FROM microsoft/dotnet:3.1-sdk
 RUN dotnet publish "Jp.Management.csproj" -c Release -o /app
 
-FROM base AS final
+FROM microsoft/dotnet:3.1-aspnetcore-runtime
 WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "Jp.Management.dll"]

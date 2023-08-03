@@ -2,6 +2,7 @@
 using Jp.Database.Context;
 using JPProject.Admin.EntityFramework.Repository.Context;
 using JPProject.EntityFrameworkCore.MigrationHelper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace JPProject.Admin.Api.Configuration
         {
             var services = serviceScope.ServiceProvider;
             var ssoContext = services.GetRequiredService<JpProjectAdminUiContext>();
+            //ssoContext.Database.Migrate();
 
             Log.Information("Check if database contains Client (ConfigurationDbStore) table");
             await DbHealthChecker.WaitForTable<Client>(ssoContext);
