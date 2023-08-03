@@ -1,9 +1,9 @@
-FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
+FROM microsoft/dotnet:3.1-aspnetcore-runtime AS base
 WORKDIR /app
 EXPOSE 5003
 EXPOSE 5002
 
-FROM microsoft/dotnet:2.2-sdk AS build
+FROM microsoft/dotnet:3.1-sdk AS build
 WORKDIR /src
 COPY ["Backend/Jp.UserManagement/Jp.Management.csproj", "Backend/Jp.UserManagement/"]
 COPY ["Backend/Jp.Infra.Migrations.Sql.Identity/Jp.Infra.Migrations.Sql.csproj", "Backend/Jp.Infra.Migrations.Sql.Identity/"]
