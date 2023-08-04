@@ -1,10 +1,12 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
+using IdentityServer4.EntityFramework.Mappers;
 using Jp.Database.Context;
 using JPProject.Admin.EntityFramework.Repository.Context;
 using JPProject.EntityFrameworkCore.MigrationHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JPProject.Admin.Api.Configuration
@@ -20,7 +22,39 @@ namespace JPProject.Admin.Api.Configuration
         {
             var services = serviceScope.ServiceProvider;
             var ssoContext = services.GetRequiredService<JpProjectAdminUiContext>();
+            //var appliedMigrationsScripts = ssoContext.Database.GetAppliedMigrations().ToList();
+            //var migrationsScripts = ssoContext.Database.GetMigrations().ToList();
+            //var pendingMigrationsScripts = ssoContext.Database.GetPendingMigrations().ToList();
+            //var generateCreateMigrationsScripts = ssoContext.Database.GenerateCreateScript();
             //ssoContext.Database.Migrate();
+
+            //ssoContext.Database.ExecuteSqlRaw(generateCreateMigrationsScripts);
+
+            if (!ssoContext.Clients.Any())
+            {
+                foreach (var client in Config.GetClients(false))
+                {
+
+                    ssoContext.Clients.Add(client.ToEntity());
+                    ssoContext.SaveChanges();
+                }
+            }
+            if (!ssoContext.ApiResources.Any())
+            {
+                foreach (var api in Config.GetApis())
+                {
+                    ssoContext.ApiResources.Add(api.ToEntity());
+                    ssoContext.SaveChanges();
+                }
+            }
+            if (!ssoContext.IdentityResources.Any())
+            {
+                foreach (var identityResource in Config.GetIdentityResources())
+                {
+                    ssoContext.IdentityResources.Add(identityResource.ToEntity());
+                    ssoContext.SaveChanges();
+                }
+            }
 
             Log.Information("Check if database contains Client (ConfigurationDbStore) table");
             await DbHealthChecker.WaitForTable<Client>(ssoContext);
